@@ -1,5 +1,7 @@
 $(document).ready(function(){
-	$('.wrap .content').html('test');
+	$('.wrap .content a').on('click', function(){
+		alert('TEST!!!');
+	});
 
 	var $wrap = $('.wrap');
 
@@ -173,7 +175,6 @@ $(document).ready(function(){
         fdrag.elem_right = fdrag.element.find('.drag-overlay.right');
         fdrag.elem_left = fdrag.element.find('.drag-overlay.left');
         fdrag.element.data('fdrag', fdrag);
-        fdrag.element.addClass('fingerdrag');
 	});
 
     $wrap.on('fingerdrag:right', function(e, drag) {
@@ -248,6 +249,9 @@ $(document).ready(function(){
         var fdrag = $(this).data('fdrag');
         if (fdrag) {
             fdrag.move(e);
+			if (!$(fdrag.element).hasClass('fingerdrag')) {
+				fdrag.element.addClass('fingerdrag');
+			}
         }
 	});
 
