@@ -175,16 +175,58 @@ $(document).ready(function(){
     });
 
     $wrap.on('fingerdrag:end', function(e, drag){
-        drag.elem_right.removeClass('active');
-        drag.elem_left.removeClass('active');
+        //nothing
 	});
 
     $wrap.on('fingerdrag:success', function(e, drag){
         console.log('success');
+
+        if (drag.direction === 'right') {
+            drag.elem_right.addClass('success-right');
+            drag.elem_right.css('left', -drag.width);
+
+            setTimeout(function(){
+                drag.elem_right.css('left', 0);
+                drag.elem_right.removeClass('success-right');
+                drag.elem_right.removeClass('active');
+            }, 300);
+        }
+
+        if (drag.direction === 'left') {
+            drag.elem_left.addClass('success-left');
+            drag.elem_left.css('left', drag.width);
+
+            setTimeout(function(){
+                drag.elem_left.css('left', 0);
+                drag.elem_left.removeClass('success-left');
+                drag.elem_left.removeClass('active');
+            }, 300);
+        }
 	});
 
     $wrap.on('fingerdrag:fail', function(e, drag){
         console.log('fail');
+
+        if (drag.direction === 'right') {
+            drag.elem_right.addClass('fail-right');
+            drag.elem_right.css('left', drag.limit);
+
+            setTimeout(function(){
+                drag.elem_right.css('left', 0);
+                drag.elem_right.removeClass('fail-right');
+                drag.elem_right.removeClass('active');
+            }, 300);
+        }
+
+        if (drag.direction === 'left') {
+            drag.elem_left.addClass('fail-left');
+            drag.elem_left.css('left', -drag.limit);
+            setTimeout(function(){
+                drag.elem_left.css('left', 0);
+                drag.elem_left.removeClass('fail-left');
+                drag.elem_left.removeClass('active');
+            }, 300);
+        }
 	});
 
     $wrap.on('tapmove', function(e){
