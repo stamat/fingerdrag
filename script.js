@@ -24,6 +24,15 @@ $(document).ready(function(){
         this.lock = false;
         this.limit = 0;
         this.debug = false;
+        this.blocked = false;
+
+        this.block = function() {
+            this.blocked = true;
+        };
+
+        this.unblock = function() {
+            this.blocked = false;
+        };
 
         this.calcRel = function(e) {
             var off = this.element.offset();
@@ -62,6 +71,10 @@ $(document).ready(function(){
         };
 
         this.move = function(e) {
+            if (this.blocked) {
+                return;
+            }
+
             var xy = this.calcRel(e);
             this.x = xy.x;
             this.y = xy.y;
@@ -152,10 +165,15 @@ $(document).ready(function(){
     }
 
 	$wrap.on('tapstart', function(e) {
+        if ($(this).hasClass('fingerdrag')) {
+            return;
+        }
+
         var fdrag = new Drag(e, this, 100, true, true);
         fdrag.elem_right = fdrag.element.find('.drag-overlay.right');
         fdrag.elem_left = fdrag.element.find('.drag-overlay.left');
         fdrag.element.data('fdrag', fdrag);
+        fdrag.element.addClass('fingerdrag');
 	});
 
     $wrap.on('fingerdrag:right', function(e, drag) {
@@ -174,59 +192,56 @@ $(document).ready(function(){
         drag.elem_left.find('.inner').css({'transform': 'translate3d('+move+'px, 0, 0)'});
     });
 
-    $wrap.on('fingerdrag:end', function(e, drag){
-        //nothing
-	});
-
     $wrap.on('fingerdrag:success', function(e, drag){
         console.log('success');
+        drag.block();
 
         if (drag.direction === 'right') {
             drag.elem_right.addClass('success-right');
             drag.elem_right.css('left', -drag.width);
-
-            setTimeout(function(){
-                drag.elem_right.css('left', 0);
-                drag.elem_right.removeClass('success-right');
-                drag.elem_right.removeClass('active');
-            }, 300);
         }
 
         if (drag.direction === 'left') {
             drag.elem_left.addClass('success-left');
             drag.elem_left.css('left', drag.width);
-
-            setTimeout(function(){
-                drag.elem_left.css('left', 0);
-                drag.elem_left.removeClass('success-left');
-                drag.elem_left.removeClass('active');
-            }, 300);
         }
+
+        setTimeout(function(){
+            drag.unblock();
+            drag.elem_right.css('left', 0);
+            drag.elem_left.css('left', 0);
+            drag.elem_left.removeClass('success-left');
+            drag.elem_right.removeClass('active');
+            drag.elem_left.removeClass('active');
+            drag.elem_right.removeClass('success-right');
+            drag.element.removeClass('fingerdrag');
+        }, 300);
 	});
 
     $wrap.on('fingerdrag:fail', function(e, drag){
         console.log('fail');
+        drag.block();
 
         if (drag.direction === 'right') {
             drag.elem_right.addClass('fail-right');
             drag.elem_right.css('left', drag.limit);
-
-            setTimeout(function(){
-                drag.elem_right.css('left', 0);
-                drag.elem_right.removeClass('fail-right');
-                drag.elem_right.removeClass('active');
-            }, 300);
         }
 
         if (drag.direction === 'left') {
             drag.elem_left.addClass('fail-left');
             drag.elem_left.css('left', -drag.limit);
-            setTimeout(function(){
-                drag.elem_left.css('left', 0);
-                drag.elem_left.removeClass('fail-left');
-                drag.elem_left.removeClass('active');
-            }, 300);
         }
+
+        setTimeout(function(){
+            drag.unblock();
+            drag.elem_right.css('left', 0);
+            drag.elem_left.css('left', 0);
+            drag.elem_right.removeClass('fail-right');
+            drag.elem_right.removeClass('active');
+            drag.elem_left.removeClass('active');
+            drag.elem_left.removeClass('fail-left');
+            drag.element.removeClass('fingerdrag');
+        }, 300);
 	});
 
     $wrap.on('tapmove', function(e){
