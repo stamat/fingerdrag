@@ -91,19 +91,17 @@ $(document).ready(function(){
             }
 
             if (this.direction === 'right') {
-                if (this.movex > this.limit) {
-                    this.element.trigger('fingerdrag:end', this);
+                if (this.movex > this.limit || this.movex < 0) {
+                    this.end();
                 } else {
-                    console.log('right');
                     this.element.trigger('fingerdrag:right', this);
                 }
             }
 
             if (this.direction === 'left') {
-                if (this.movex < -1 * this.limit) {
-                    this.element.trigger('fingerdrag:end', this);
+                if (this.movex < -1 * this.limit || this.movex > 0) {
+                    this.end();
                 } else {
-                    console.log('left');
                     this.element.trigger('fingerdrag:left', this);
                 }
             }
@@ -115,9 +113,7 @@ $(document).ready(function(){
             this.element.trigger('fingerdrag:move', this);
 
             if (this.debug) {
-
                 var debug_arr = ['startx', 'x', 'movex', 'limit', 'direction'];
-
                 for (var i = 0; i < debug_arr.length; i++) {
                     var key = debug_arr[i];
                     $('.'+key).html(this[key]);
@@ -126,10 +122,28 @@ $(document).ready(function(){
         };
 
         this.end = function(e) {
-            var xy = this.calcRel(e);
-            this.endx = xy.x;
-            this.endy = xy.y;
+            if (e) {
+                var xy = this.calcRel(e);
+                this.endx = xy.x;
+                this.endy = xy.y;
+            }
             this.element.data('fdrag', null);
+
+            if (this.direction === 'right') {
+                if (this.movex < this.limit) {
+                    this.element.trigger('fingerdrag:fail', this);
+                } else {
+                    this.element.trigger('fingerdrag:success', this);
+                }
+            }
+
+            if (this.direction === 'left') {
+                if (this.movex > -1 * this.limit) {
+                    this.element.trigger('fingerdrag:fail', this);
+                } else {
+                    this.element.trigger('fingerdrag:success', this);
+                }
+            }
 
             this.element.trigger('fingerdrag:end', this);
         };
@@ -144,28 +158,33 @@ $(document).ready(function(){
         fdrag.element.data('fdrag', fdrag);
 	});
 
-    $wrap.on('fingerdrag:move', function(e, drag) {
-        if (drag.movex <= 100 && drag.direction === 'right') {
-            if (!drag.elem_right.hasClass('active')) {
-                drag.elem_right.addClass('active');
-            }
-
-            drag.elem_right.find('.inner').css({'transform': 'translate3d('+(100 - drag.movex)+'px, 0, 0)'});
+    $wrap.on('fingerdrag:right', function(e, drag) {
+        if (!drag.elem_right.hasClass('active')) {
+            drag.elem_right.addClass('active');
         }
 
-        if (drag.movex >= -100 && drag.direction === 'left') {
-            if (!drag.elem_left.hasClass('active')) {
-                drag.elem_left.addClass('active');
-            }
-            var move = -1*(100 + drag.movex);
-            drag.elem_left.find('.inner').css({'transform': 'translate3d('+move+'px, 0, 0)'});
+        drag.elem_right.find('.inner').css({'transform': 'translate3d('+(100 - drag.movex)+'px, 0, 0)'});
+    });
 
+    $wrap.on('fingerdrag:left', function(e, drag) {
+        if (!drag.elem_left.hasClass('active')) {
+            drag.elem_left.addClass('active');
         }
-	});
+        var move = -1*(100 + drag.movex);
+        drag.elem_left.find('.inner').css({'transform': 'translate3d('+move+'px, 0, 0)'});
+    });
 
     $wrap.on('fingerdrag:end', function(e, drag){
         drag.elem_right.removeClass('active');
         drag.elem_left.removeClass('active');
+	});
+
+    $wrap.on('fingerdrag:success', function(e, drag){
+        console.log('success');
+	});
+
+    $wrap.on('fingerdrag:fail', function(e, drag){
+        console.log('fail');
 	});
 
     $wrap.on('tapmove', function(e){
