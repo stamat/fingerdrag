@@ -1,15 +1,20 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
 .wrap {
 	position: relative;
 
-	width: 300px;
+	width: 100%;
 	min-height: 100px;
 	background: lightgray;
     overflow: hidden;
 }
 
 .main-wrap {
-    margin-top: 10px;
-    margin-left: 50px;
+    width: 100%;
+    margin-top: 30px;
 }
 
 .drag-overlay {
@@ -31,6 +36,7 @@
     left: 0px;
     opacity: 0;
     transition: opacity 150ms ease-in-out;
+    color: white;
 }
 
 .drag-overlay.active {
