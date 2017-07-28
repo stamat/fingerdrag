@@ -106,16 +106,16 @@ $(document).ready(function(){
             }
 
             if (this.direction === 'right') {
-                if (this.movex > this.limit || this.movex < 0) {
-                    this.end();
+                if (this.movex > 3*this.limit || this.movex < -this.limit) {
+                    //this.end();
                 } else {
                     this.element.trigger('fingerdrag:right', this);
                 }
             }
 
             if (this.direction === 'left') {
-                if (this.movex < -1 * this.limit || this.movex > 0) {
-                    this.end();
+                if (this.movex < -3 * this.limit || this.movex > this.limit) {
+                    //this.end();
                 } else {
                     this.element.trigger('fingerdrag:left', this);
                 }
@@ -189,7 +189,7 @@ $(document).ready(function(){
         if (!drag.elem_left.hasClass('active')) {
             drag.elem_left.addClass('active');
         }
-        var move = -1*(100 + drag.movex);
+        var move = -1*(400 + drag.movex);
         drag.elem_left.find('.inner').css({'transform': 'translate3d('+move+'px, 0, 0)'});
     });
 

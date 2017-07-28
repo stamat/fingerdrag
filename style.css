@@ -37,6 +37,7 @@ body {
     opacity: 0;
     transition: opacity 150ms ease-in-out;
     color: white;
+    box-sizing: content-box;
 }
 
 .drag-overlay.active {
@@ -51,9 +52,11 @@ body {
 .drag-overlay.right .inner {
     background: red;
     transform: translate3d(100px, 0 , 0);
+    padding-right: 300px;
 }
 
 .drag-overlay.left .inner {
     background: green;
-    transform: translate3d(-100px, 0 , 0);
+    transform: translate3d(-400px, 0 , 0);
+    padding-left: 300px;
 }
