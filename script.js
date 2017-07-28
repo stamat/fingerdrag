@@ -109,7 +109,10 @@ $(document).ready(function(){
                 if (this.movex > 3*this.limit || this.movex < -this.limit) {
                     //this.end();
                 } else {
-                    this.element.trigger('fingerdrag:right', this);
+					//activate a bit later after some draging
+					if (this.movex > this.limit / 4) {
+						this.element.trigger('fingerdrag:right', this);
+					}
                 }
             }
 
@@ -117,7 +120,10 @@ $(document).ready(function(){
                 if (this.movex < -3 * this.limit || this.movex > this.limit) {
                     //this.end();
                 } else {
-                    this.element.trigger('fingerdrag:left', this);
+					//activate a bit later after some draging
+					if (this.movex < -this.limit / 4) {
+						this.element.trigger('fingerdrag:left', this);
+					}
                 }
             }
 
